@@ -190,10 +190,15 @@ try {
   ok("script completed without throwing", false, String(e).split("\n")[0]);
 } finally {
   if (docUrl && ava) {
+    // Use the context's request API rather than an in-page fetch: an in-page
+    // fetch resolves as soon as it is issued, so the browser can close before
+    // the DELETE reaches the server and the scratch document leaks.
     const id = docUrl.split("/").pop();
-    await ava.page
-      .evaluate((d) => fetch(`/api/documents/${d}`, { method: "DELETE" }), id)
-      .catch(() => {});
+    const deleted = await ava.ctx
+      .request.delete(`${BASE}/api/documents/${id}`)
+      .then((r) => r.ok())
+      .catch(() => false);
+    ok("scratch document cleaned up", deleted);
   }
   const allErrors = [...(ava?.errors ?? []), ...(cleo?.errors ?? [])].filter(
     (e) => !/favicon|React DevTools/i.test(e),
