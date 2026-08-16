@@ -49,3 +49,7 @@ next-env.d.ts
 PASTE-INTO-FORM.md
 ajaia-docs-source.zip
 VIDEO-SCRIPT.local.md
+
+# verification artefacts
+.verify-shots/
+.verify-tmp.*

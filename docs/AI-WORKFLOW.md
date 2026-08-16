@@ -34,7 +34,7 @@ types our schema allows, and make it unit-testable" produces the thing I actuall
 - **Boilerplate with a known shape** — REST handlers, Zod schemas, Tailwind markup, the share
   dialog. This is the bulk of the line count and near-zero of the thinking.
 - **Test enumeration.** I specified the permission matrix and the edge cases I cared about; the
-  model wrote 42 tests covering them faster than I would have, including cases I'd have skipped
+  model wrote 43 tests covering them faster than I would have, including cases I'd have skipped
   under time pressure (anonymous caller, stale owner-share row, `.doc` renamed to `.docx`).
 - **Documentation drafting** — this note, the README tables, and the architecture note started as
   drafts I restructured.
@@ -84,12 +84,12 @@ Four layers, in increasing cost:
 
 1. **`tsc --noEmit` and `eslint`** on every change. The React Compiler rules in Next 16 caught the
    autosave bug described above.
-2. **`vitest run` — 42 tests** over the pure modules. This caught a real bug: `docToPlainText`
+2. **`vitest run` — 43 tests** over the pure modules. This caught a real bug: `docToPlainText`
    emitted phantom blank lines between list items, because `listItem` and `blockquote` wrap
    paragraphs and were both being counted as text-emitting blocks. Nothing in the UI would have made
    that obvious; it would have shown up as ugly dashboard previews.
 3. **A production build** (`npm run build`) before deploying, not after.
-4. **A headless-browser pass** (`npm run verify:ui`, 20 checks) driving the real UI against the
+4. **A headless-browser pass** (`npm run verify:ui`, 55 checks) driving the real UI against the
    production build. This is the layer that earned its cost — it caught **two bugs nothing else
    could have**:
 
@@ -106,6 +106,21 @@ Four layers, in increasing cost:
 
    Both are the kind of defect that survives a green type check, a green test suite, and a clean
    `curl` matrix, and then greets a reviewer thirty seconds into the demo.
+
+   Expanding that suite to 55 checks — every denial path, every validation message, and a 390 px
+   mobile pass — then found three more:
+
+   - **The delete confirmation named the wrong document.** It took the title from the server render,
+     so after a rename the confirmation still said "Untitled document". Naming the wrong file is
+     worst exactly where I'd put it: on the irreversible action. My first fix — `router.refresh()`
+     after a title save — *didn't work*, and the re-run proved it rather than letting me assume. The
+     real fix was making the title a single client-owned value shared by the editor and the header,
+     which removes the class of bug instead of patching one instance.
+   - **Opening a document rewrote it.** Tiptap emits an update while normalising initial content, so
+     merely viewing a document saved it and bumped its "edited" time. Fixed by comparing serialized
+     content and skipping no-op saves.
+   - **The Delete button was clipped to "De" on a phone.** A fixed-height header row squeezed its
+     children. Only a real mobile viewport shows that.
 
 5. **An end-to-end `curl` matrix against the running production server**, covering the paths a
    reviewer will actually try — and, more importantly, every denial path:

@@ -42,8 +42,8 @@ opens read-only, no toolbar.
 | `components/` | Editor, toolbar, share dialog, autosave hook |
 | `lib/` | Domain layer: access rules, document validation, Markdown import/export, upload gating |
 | `prisma/` | Schema, migration, seed script |
-| `tests/` | 42 vitest unit tests over the domain layer |
-| `scripts/verify-ui.mjs` | 20 end-to-end browser checks (`npm run verify:ui`) |
+| `tests/` | 43 vitest unit tests over the domain layer |
+| `scripts/verify-ui.mjs` | 55 end-to-end browser checks (`npm run verify:ui`) |
 | `samples/` | Example files for testing the upload flow |
 
 ---
@@ -71,9 +71,9 @@ opens read-only, no toolbar.
   the inverse of the import converter, and a test asserts a document round-trips through export and
   re-import unchanged. Viewers can export too, since they are allowed to read.
 - **Role-based sharing** *(stretch)* — viewer vs. editor, enforced server-side.
-- **Automated tests** — `npm test` runs 42 unit tests covering the permission matrix, the content
+- **Automated tests** — `npm test` runs 43 unit tests covering the permission matrix, the content
   validation allowlist, the Markdown converter and exporter, and upload gating. `npm run verify:ui`
-  runs 20 end-to-end browser checks against a running build.
+  runs 55 end-to-end browser checks against a running build.
 
 > The browser suite was run against the **live deployment**, not just locally
 > (`VERIFY_BASE_URL=https://ajaia-docs-lovat.vercel.app npm run verify:ui`) — all 20 pass. The link
@@ -113,7 +113,7 @@ cp .env.example .env          # set DATABASE_URL (any Postgres; `npx create-db` 
 npx prisma migrate deploy
 npm run db:seed               # creates the 3 accounts above
 npm run dev                   # http://localhost:3000
-npm test                      # 42 tests
+npm test                      # 43 tests
 ```
 
 Full detail in `README.md`.

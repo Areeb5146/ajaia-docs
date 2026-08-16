@@ -24,7 +24,8 @@ Built for the Ajaia AI-Native Full Stack Developer assignment.
 | Persistence in Postgres; formatting survives refresh | Working |
 | **Stretch:** role-based sharing (viewer / editor) | Working |
 | **Stretch:** export a document to Markdown | Working |
-| Automated tests (42 unit + 20 end-to-end browser checks) | Working |
+| Delete a document (owner-only, with confirmation) | Working |
+| Automated tests (43 unit + 55 end-to-end browser checks) | Working |
 | Real-time multi-user editing | **Not built** — see ARCHITECTURE.md |
 | Real authentication | **Not built** — mocked, seeded accounts by design |
 
@@ -105,7 +106,7 @@ npm run build && npm start
 ### Other commands
 
 ```bash
-npm test          # 42 unit tests (vitest)
+npm test          # 43 unit tests (vitest)
 npm run typecheck # tsc --noEmit
 npm run lint      # eslint + React Compiler rules
 npm run db:studio # browse the data
@@ -120,7 +121,7 @@ that a viewer genuinely cannot edit.
 ```bash
 npx playwright install chromium   # one-time
 npm run build && npm start        # terminal 1
-npm run verify:ui                 # terminal 2 — 20 checks
+npm run verify:ui                 # terminal 2 — 55 checks
 ```
 
 It signs in, applies formatting, waits for autosave, reloads and re-checks the formatting, uploads

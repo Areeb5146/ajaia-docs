@@ -23,15 +23,15 @@ export function AppHeader({
 
   return (
     <header className="sticky top-0 z-20 border-b border-line bg-surface">
-      <div className="mx-auto flex h-14 max-w-5xl items-center gap-3 px-4">
-        <Link href="/documents" className="text-base font-semibold">
+      {/* Wraps instead of squeezing: on a narrow screen a fixed-height row
+          clipped the action buttons to unreadable stubs. */}
+      <div className="mx-auto flex min-h-14 max-w-5xl flex-wrap items-center gap-x-3 gap-y-2 px-4 py-2">
+        <Link href="/documents" className="shrink-0 text-base font-semibold">
           Ajaia Docs
         </Link>
-        <div className="flex flex-1 items-center gap-2 overflow-hidden">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-wrap items-center gap-2">{children}</div>
         <span
-          className="hidden text-xs text-muted sm:block"
+          className="hidden shrink-0 text-xs text-muted sm:block"
           title={user.email}
         >
           {user.name}
@@ -40,7 +40,7 @@ export function AppHeader({
           type="button"
           onClick={signOut}
           disabled={signingOut}
-          className="rounded-md border border-line px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50 disabled:opacity-50"
+          className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50 disabled:opacity-50"
         >
           {signingOut ? "Signing out…" : "Sign out"}
         </button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ShareRole } from "@/lib/access";
 
 type ShareEntry = {
@@ -27,6 +27,17 @@ export function ShareDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  // Escape closes the dialog — expected of any modal, and the only way out for
+  // keyboard users who never reach the close button.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   async function grant(event: React.FormEvent) {
     event.preventDefault();
@@ -79,7 +90,7 @@ export function ShareDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md border border-line px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50"
+        className="shrink-0 rounded-md border border-line px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50"
       >
         {canManage ? "Share" : "Who has access"}
       </button>

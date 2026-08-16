@@ -9,10 +9,10 @@ import { docToMarkdown, markdownFilename } from "@/lib/export";
 import { ACCEPT_ATTRIBUTE, SUPPORTED_EXTENSIONS } from "@/lib/import";
 import { EditorToolbar } from "./EditorToolbar";
 import { useAutosave, type SaveStatus } from "./useAutosave";
+import { useDocumentTitle } from "./DocumentTitleContext";
 
 type Props = {
   documentId: string;
-  initialTitle: string;
   initialContent: object;
   access: Access;
 };
@@ -42,14 +42,17 @@ async function patchDocument(
 
 export function DocumentEditor({
   documentId,
-  initialTitle,
   initialContent,
   access,
 }: Props) {
-  const [title, setTitle] = useState(initialTitle);
+  // Shared with the surrounding page so a rename cannot leave a stale copy
+  // anywhere (notably the delete confirmation, which names the document).
+  const { title, setTitle } = useDocumentTitle();
   const [importError, setImportError] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null);
+  /** Serialized content as last persisted, used to suppress no-op saves. */
+  const lastSaved = useRef(JSON.stringify(initialContent));
 
   const { status, error, schedule, saveNow } = useAutosave<{
     title?: string;
@@ -80,7 +83,16 @@ export function DocumentEditor({
       // and the failure surfaces as an alarming error box on a page they were
       // never allowed to edit.
       if (!access.canWrite) return;
-      schedule({ content: instance.getJSON() });
+
+      // It also emits one on mount while normalising the initial content.
+      // Saving that would rewrite the document — and bump its "edited" time —
+      // just for opening it. Only schedule when the content actually differs.
+      const next = instance.getJSON();
+      const serialized = JSON.stringify(next);
+      if (serialized === lastSaved.current) return;
+      lastSaved.current = serialized;
+
+      schedule({ content: next });
     },
   });
 
@@ -103,6 +115,9 @@ export function DocumentEditor({
       });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error ?? "Could not import file.");
+      // The server already persisted the merge, so record it as saved before
+      // setContent fires onUpdate — otherwise we immediately PATCH it straight back.
+      lastSaved.current = JSON.stringify(payload.content);
       editor?.commands.setContent(payload.content);
     } catch (e) {
       setImportError(e instanceof Error ? e.message : "Could not import file.");

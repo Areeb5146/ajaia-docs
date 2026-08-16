@@ -37,6 +37,25 @@ describe("docToMarkdown", () => {
     expect(second).toEqual(first);
   });
 
+  it("round-trips adjacent runs with different marks", () => {
+    // These export as `**bold***italic*`, which is an ambiguous-looking
+    // delimiter run. Both our parser and CommonMark read it correctly, but it
+    // is exactly the shape that silently breaks a naive exporter.
+    const doc = {
+      type: "doc" as const,
+      content: [
+        {
+          type: "paragraph",
+          content: [
+            { type: "text", text: "bold", marks: [{ type: "bold" as const }] },
+            { type: "text", text: "italic", marks: [{ type: "italic" as const }] },
+          ],
+        },
+      ],
+    };
+    expect(markdownToDoc(docToMarkdown(doc))).toEqual(doc);
+  });
+
   it("returns an empty string for junk input", () => {
     expect(docToMarkdown(null)).toBe("");
     expect(docToMarkdown({ type: "paragraph" })).toBe("");
