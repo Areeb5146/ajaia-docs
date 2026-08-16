@@ -109,6 +109,26 @@ npm run lint      # eslint + React Compiler rules
 npm run db:studio # browse the data
 ```
 
+### End-to-end UI check
+
+`npm test` covers the domain layer. `scripts/verify-ui.mjs` covers what only a real browser can
+prove — that the editor hydrates, that formatting survives a round-trip through the database, and
+that a viewer genuinely cannot edit.
+
+```bash
+npx playwright install chromium   # one-time
+npm run build && npm start        # terminal 1
+npm run verify:ui                 # terminal 2 — 18 checks
+```
+
+It signs in, applies formatting, waits for autosave, reloads and re-checks the formatting, uploads
+`samples/sample-import.md`, shares with a second account, and asserts the recipient gets a read-only
+editor — while watching for uncaught console errors and failed API calls throughout. Point it at a
+deployment with `VERIFY_BASE_URL=https://… npm run verify:ui`.
+
+This found two real bugs that neither the type checker nor the unit tests could: see
+[docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md).
+
 ---
 
 ## Deploying

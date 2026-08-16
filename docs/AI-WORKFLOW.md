@@ -89,7 +89,25 @@ Four layers, in increasing cost:
    paragraphs and were both being counted as text-emitting blocks. Nothing in the UI would have made
    that obvious; it would have shown up as ugly dashboard previews.
 3. **A production build** (`npm run build`) before deploying, not after.
-4. **An end-to-end `curl` matrix against the running production server**, covering the paths a
+4. **A headless-browser pass** (`npm run verify:ui`, 18 checks) driving the real UI against the
+   production build. This is the layer that earned its cost — it caught **two bugs nothing else
+   could have**:
+
+   - **Autosave dropped edits.** The debounce queue *replaced* the pending payload instead of
+     merging it. The editor schedules `{ content }` and the title field schedules `{ title }`, so
+     typing and then renaming silently discarded the content edit. The browser check found it by
+     doing the obvious human thing — edit, rename, reload — and finding the title saved and the body
+     empty. Fixed by merging into the pending object.
+   - **A read-only user saw a permission error.** Tiptap emits an update when the editor is switched
+     to read-only, which fired a `PATCH` that the server correctly rejected with 403 — surfacing an
+     alarming red error box to a viewer who was never allowed to edit. The API was behaving
+     perfectly; the bug was only visible from the browser. Fixed by guarding `onUpdate` on the write
+     capability.
+
+   Both are the kind of defect that survives a green type check, a green test suite, and a clean
+   `curl` matrix, and then greets a reviewer thirty seconds into the demo.
+
+5. **An end-to-end `curl` matrix against the running production server**, covering the paths a
    reviewer will actually try — and, more importantly, every denial path:
 
    | Check | Expected | Result |
@@ -105,7 +123,7 @@ Four layers, in increasing cost:
    | Share unknown email | 404, explains seeded accounts | 404 |
    | Role upgrade viewer → editor, then write | 200 | 200 |
 
-**On UX quality**, tests are the wrong instrument — I drove the actual flows in the browser: create,
+**On UX quality**, automated checks only go so far — I also drove the actual flows in the browser: create,
 format with both toolbar and keyboard shortcuts, refresh to confirm formatting persisted, import a
 file, share, and re-open as the recipient to confirm the read-only state renders without a toolbar.
 

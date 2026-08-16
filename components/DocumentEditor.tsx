@@ -74,6 +74,11 @@ export function DocumentEditor({
       },
     },
     onUpdate: ({ editor: instance }) => {
+      // Tiptap emits an update when the editor is made read-only. Without this
+      // guard a viewer fires a PATCH that the server correctly rejects with 403,
+      // and the failure surfaces as an alarming error box on a page they were
+      // never allowed to edit.
+      if (!access.canWrite) return;
       schedule({ content: instance.getJSON() });
     },
   });
@@ -133,7 +138,7 @@ export function DocumentEditor({
         </span>
       </div>
 
-      {status === "error" && error && (
+      {!readOnly && status === "error" && error && (
         <p role="alert" className="mt-2 rounded-md bg-red-50 p-3 text-sm text-red-700">
           {error}{" "}
           <button

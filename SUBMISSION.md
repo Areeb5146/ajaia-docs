@@ -65,8 +65,9 @@ opens read-only, no toolbar.
   owner's name and whether you can edit or only view.
 - **Validation and errors** — every failure path returns a readable message: unsupported file type,
   oversized file, corrupt `.docx`, empty title, unknown share recipient, invalid document content.
-- **Automated tests** — `npm test` runs 35 tests covering the permission matrix, the content
-  validation allowlist, the Markdown converter, and upload gating.
+- **Automated tests** — `npm test` runs 35 unit tests covering the permission matrix, the content
+  validation allowlist, the Markdown converter, and upload gating. `npm run verify:ui` runs 18
+  end-to-end browser checks against a running build.
 
 ## What is intentionally incomplete
 
@@ -77,7 +78,7 @@ Each of these was a deliberate cut, not an oversight. Reasoning is in `docs/ARCH
 | **Real-time collaboration** | The single largest cost in the brief (CRDT/OT + websockets + presence). A half-finished implementation corrupts documents, which is worse than not having it. Autosave is last-write-wins; concurrent editors overwrite each other. |
 | **Real authentication** | The brief permits seeded accounts. The session cookie holds an unsigned user id. Isolated to `lib/session.ts` so it is a contained change later. |
 | **File storage** | Uploads are parsed in memory and discarded; only the resulting text is persisted. Storing originals means a blob store — another service for reviewers to configure, for no gain in the product behaviour asked for. |
-| **UI/integration tests** | Tests cover the domain layer, where bugs are silent. A broken button is visible in five seconds; a wrong access rule is not. The API layer was verified by an end-to-end request matrix against the running server (documented in `docs/AI-WORKFLOW.md`). |
+| **API integration tests** | Unit tests cover the domain layer, where bugs are silent, and `npm run verify:ui` covers the browser flows. What's missing is a test database with fixtures for the HTTP layer; that matrix is currently verified by hand (documented in `docs/AI-WORKFLOW.md`). |
 | **Invite flow for sharing** | There is no real signup, so sharing is limited to seeded emails. The UI says so when an unknown address is entered. |
 | **Nested lists, tables, images, links** | Out of the editor schema on purpose — the schema is also the server-side validation allowlist, and every node type added is another thing to validate and to convert on import. |
 

@@ -15,7 +15,7 @@ export type SaveStatus = "idle" | "unsaved" | "saving" | "saved" | "error";
  * No manual useCallback/useMemo: the React Compiler memoizes this, and hand-rolled
  * memoization on the self-recursive `flush` defeats it.
  */
-export function useAutosave<T>(
+export function useAutosave<T extends object>(
   save: (value: T) => Promise<void>,
   { delay = 900 }: { delay?: number } = {},
 ) {
@@ -57,8 +57,11 @@ export function useAutosave<T>(
     }
   }
 
-  function schedule(value: T) {
-    pending.current = value;
+  function schedule(value: Partial<T>) {
+    // Merge, do not replace. The editor schedules `{ content }` and the title
+    // field schedules `{ title }`; replacing would silently drop whichever field
+    // was scheduled first, losing an edit the user already made.
+    pending.current = { ...(pending.current ?? {}), ...value } as T;
     setStatus("unsaved");
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(() => void flush(), delay);
