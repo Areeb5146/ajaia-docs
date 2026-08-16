@@ -53,3 +53,4 @@ VIDEO-SCRIPT.local.md
 # verification artefacts
 .verify-shots/
 .verify-tmp.*
+*.local.md
