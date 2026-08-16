@@ -70,7 +70,10 @@ opens read-only, no toolbar.
 - **Export to Markdown** *(stretch)* — any document downloads as `.md` with formatting intact. It is
   the inverse of the import converter, and a test asserts a document round-trips through export and
   re-import unchanged. Viewers can export too, since they are allowed to read.
-- **Role-based sharing** *(stretch)* — viewer vs. editor, enforced server-side.
+- **Role-based sharing** *(stretch)* — viewer vs. editor, enforced server-side. The brief asked for
+  one stretch item; this and Markdown export are two.
+- **Delete** — owner-only, with an inline confirmation that names the document and warns when other
+  people will lose access.
 - **Automated tests** — `npm test` runs 43 unit tests covering the permission matrix, the content
   validation allowlist, the Markdown converter and exporter, and upload gating. `npm run verify:ui`
   runs 55 end-to-end browser checks against a running build.
