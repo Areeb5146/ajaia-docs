@@ -119,7 +119,7 @@ and a corrupt/renamed `.docx` — that last one otherwise surfaces as a raw zip 
 ## Testing
 
 42 tests over the five pure modules: access rules, document validation, the Markdown converter, the
-Markdown exporter, and upload gating. Plus 19 end-to-end browser checks (`npm run verify:ui`).
+Markdown exporter, and upload gating. Plus 20 end-to-end browser checks (`npm run verify:ui`).
 
 The export suite includes a **round-trip assertion** — a document exported to Markdown and
 re-imported must produce an identical tree. That is the cheapest strong guarantee available for two

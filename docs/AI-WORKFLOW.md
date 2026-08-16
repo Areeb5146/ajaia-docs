@@ -89,7 +89,7 @@ Four layers, in increasing cost:
    paragraphs and were both being counted as text-emitting blocks. Nothing in the UI would have made
    that obvious; it would have shown up as ugly dashboard previews.
 3. **A production build** (`npm run build`) before deploying, not after.
-4. **A headless-browser pass** (`npm run verify:ui`, 19 checks) driving the real UI against the
+4. **A headless-browser pass** (`npm run verify:ui`, 20 checks) driving the real UI against the
    production build. This is the layer that earned its cost — it caught **two bugs nothing else
    could have**:
 

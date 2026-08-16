@@ -4,7 +4,7 @@ A lightweight collaborative document editor — create, format, import, share, a
 
 Built for the Ajaia AI-Native Full Stack Developer assignment.
 
-- **Live app:** _(see SUBMISSION.md)_
+- **Live app:** https://ajaia-docs-lovat.vercel.app
 - **Architecture note:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - **AI workflow note:** [docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md)
 
@@ -24,7 +24,7 @@ Built for the Ajaia AI-Native Full Stack Developer assignment.
 | Persistence in Postgres; formatting survives refresh | Working |
 | **Stretch:** role-based sharing (viewer / editor) | Working |
 | **Stretch:** export a document to Markdown | Working |
-| Automated tests (42 unit + 19 end-to-end browser checks) | Working |
+| Automated tests (42 unit + 20 end-to-end browser checks) | Working |
 | Real-time multi-user editing | **Not built** — see ARCHITECTURE.md |
 | Real authentication | **Not built** — mocked, seeded accounts by design |
 
@@ -120,7 +120,7 @@ that a viewer genuinely cannot edit.
 ```bash
 npx playwright install chromium   # one-time
 npm run build && npm start        # terminal 1
-npm run verify:ui                 # terminal 2 — 19 checks
+npm run verify:ui                 # terminal 2 — 20 checks
 ```
 
 It signs in, applies formatting, waits for autosave, reloads and re-checks the formatting, uploads

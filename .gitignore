@@ -43,3 +43,4 @@ next-env.d.ts
 
 # generated Prisma client (recreated by `prisma generate` on install)
 /lib/generated
+

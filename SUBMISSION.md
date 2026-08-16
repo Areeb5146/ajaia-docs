@@ -9,8 +9,8 @@
 
 | What | Where |
 | --- | --- |
-| **Live app** | `LIVE_URL` |
-| **Source code (GitHub)** | `REPO_URL` |
+| **Live app** | https://ajaia-docs-lovat.vercel.app |
+| **Source code (GitHub)** | https://github.com/Areeb5146/ajaia-docs |
 | **Walkthrough video** | `VIDEO_URL` |
 | **Google Drive folder** | `DRIVE_URL` |
 
@@ -43,7 +43,7 @@ opens read-only, no toolbar.
 | `lib/` | Domain layer: access rules, document validation, Markdown import/export, upload gating |
 | `prisma/` | Schema, migration, seed script |
 | `tests/` | 42 vitest unit tests over the domain layer |
-| `scripts/verify-ui.mjs` | 19 end-to-end browser checks (`npm run verify:ui`) |
+| `scripts/verify-ui.mjs` | 20 end-to-end browser checks (`npm run verify:ui`) |
 | `samples/` | Example files for testing the upload flow |
 
 ---
@@ -73,7 +73,12 @@ opens read-only, no toolbar.
 - **Role-based sharing** *(stretch)* — viewer vs. editor, enforced server-side.
 - **Automated tests** — `npm test` runs 42 unit tests covering the permission matrix, the content
   validation allowlist, the Markdown converter and exporter, and upload gating. `npm run verify:ui`
-  runs 19 end-to-end browser checks against a running build.
+  runs 20 end-to-end browser checks against a running build.
+
+> The browser suite was run against the **live deployment**, not just locally
+> (`VERIFY_BASE_URL=https://ajaia-docs-lovat.vercel.app npm run verify:ui`) — all 20 pass. The link
+> above is a build I have actually exercised end to end, not one I assumed worked because it
+> deployed.
 
 ## What is intentionally incomplete
 
