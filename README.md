@@ -125,9 +125,15 @@ npm run verify:ui                 # terminal 2 — 55 checks
 ```
 
 It signs in, applies formatting, waits for autosave, reloads and re-checks the formatting, uploads
-`samples/sample-import.md`, shares with a second account, and asserts the recipient gets a read-only
-editor — while watching for uncaught console errors and failed API calls throughout. Point it at a
-deployment with `VERIFY_BASE_URL=https://… npm run verify:ui`.
+`samples/sample-import.md`, shares with a second account, revokes access, deletes a document, and
+asserts the recipient loses access at each step — while watching for uncaught console errors and
+failed API calls throughout. Point it at a deployment with
+`VERIFY_BASE_URL=https://… npm run verify:ui`.
+
+> **It writes to the database it points at.** It creates, shares and deletes real documents, and
+> cleans up after itself on the happy path — but an aborted run can leave the seeded reviewer state
+> drifted. Re-run `npm run db:seed` afterwards; the seed is idempotent and restores the two demo
+> documents and their shares exactly.
 
 This found two real bugs that neither the type checker nor the unit tests could: see
 [docs/AI-WORKFLOW.md](docs/AI-WORKFLOW.md).

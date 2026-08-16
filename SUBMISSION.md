@@ -11,7 +11,7 @@
 | --- | --- |
 | **Live app** | https://ajaia-docs-lovat.vercel.app |
 | **Source code (GitHub)** | https://github.com/Areeb5146/ajaia-docs |
-| **Walkthrough video** | `VIDEO_URL` |
+| **Walkthrough video** | https://www.loom.com/share/9e7ca4c6d3284c638fa2ad2356940cfd |
 | **Google Drive folder** | `DRIVE_URL` |
 
 ## Test accounts
@@ -79,7 +79,7 @@ opens read-only, no toolbar.
   runs 55 end-to-end browser checks against a running build.
 
 > The browser suite was run against the **live deployment**, not just locally
-> (`VERIFY_BASE_URL=https://ajaia-docs-lovat.vercel.app npm run verify:ui`) — all 20 pass. The link
+> (`VERIFY_BASE_URL=https://ajaia-docs-lovat.vercel.app npm run verify:ui`) — all 55 pass. The link
 > above is a build I have actually exercised end to end, not one I assumed worked because it
 > deployed.
 

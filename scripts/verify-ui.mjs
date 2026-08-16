@@ -2,6 +2,15 @@
  * End-to-end verification against a running server, in real Chromium.
  * Covers the happy paths, every denial path, validation, and UI edge cases.
  * Writes screenshots so the run can be reviewed by eye.
+ *
+ * Usage:  npm run build && npm start   (one terminal)
+ *         npm run verify:ui            (another)
+ *         VERIFY_BASE_URL=https://… npm run verify:ui   (against a deployment)
+ *
+ * NOTE: this writes to whatever database the target uses. It creates, shares
+ * and deletes real documents, and cleans up after itself on the happy path —
+ * but an aborted run can leave the seeded reviewer state drifted. Run
+ * `npm run db:seed` afterwards to restore it; the seed is idempotent.
  */
 import { chromium } from "playwright";
 import fs from "node:fs";
