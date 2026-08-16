@@ -1,0 +1,60 @@
+// Ajaia collaborative docs — data model
+// Scope note: mocked auth (seeded users, cookie-selected identity), so User holds
+// no credential fields. See docs/ARCHITECTURE.md for the tradeoff rationale.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  ownedDocuments Document[] @relation("OwnedDocuments")
+  shares         Share[]
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  title     String   @default("Untitled document")
+  /// Tiptap/ProseMirror JSON. Stored as JSON (not HTML) so formatting survives
+  /// round-trips and stays sanitizable on read.
+  content   Json
+  /// Denormalized plain text, used for list previews. Cheap to keep in sync.
+  plainText String   @default("") @db.Text
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  owner  User    @relation("OwnedDocuments", fields: [ownerId], references: [id], onDelete: Cascade)
+  shares Share[]
+
+  @@index([ownerId])
+  @@index([updatedAt])
+}
+
+enum ShareRole {
+  VIEWER
+  EDITOR
+}
+
+model Share {
+  id         String    @id @default(cuid())
+  documentId String
+  userId     String
+  role       ShareRole @default(VIEWER)
+  createdAt  DateTime  @default(now())
+
+  document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, userId])
+  @@index([userId])
+}
