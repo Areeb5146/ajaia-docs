@@ -44,3 +44,7 @@ next-env.d.ts
 # generated Prisma client (recreated by `prisma generate` on install)
 /lib/generated
 
+
+# local-only helper files
+PASTE-INTO-FORM.md
+ajaia-docs-source.zip
