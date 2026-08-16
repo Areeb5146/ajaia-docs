@@ -5,6 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import { Placeholder } from "@tiptap/extensions";
 import { useEffect, useRef, useState } from "react";
 import type { Access } from "@/lib/access";
+import { docToMarkdown, markdownFilename } from "@/lib/export";
 import { ACCEPT_ATTRIBUTE, SUPPORTED_EXTENSIONS } from "@/lib/import";
 import { EditorToolbar } from "./EditorToolbar";
 import { useAutosave, type SaveStatus } from "./useAutosave";
@@ -111,6 +112,20 @@ export function DocumentEditor({
     }
   }
 
+  /** Export what is on screen, so unsaved edits are included. */
+  function exportMarkdown() {
+    if (!editor) return;
+    const markdown = docToMarkdown(editor.getJSON());
+    const url = URL.createObjectURL(
+      new Blob([markdown], { type: "text/markdown;charset=utf-8" }),
+    );
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = markdownFilename(title);
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   const readOnly = !access.canWrite;
 
   return (
@@ -151,31 +166,46 @@ export function DocumentEditor({
         </p>
       )}
 
-      {access.canWrite && (
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <button
-            type="button"
-            onClick={() => fileInput.current?.click()}
-            disabled={importing}
-            className="rounded-md border border-line bg-surface px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50 disabled:opacity-50"
-          >
-            {importing ? "Importing…" : "Import file into this document"}
-          </button>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {access.canWrite && (
+          <>
+            <button
+              type="button"
+              onClick={() => fileInput.current?.click()}
+              disabled={importing}
+              className="rounded-md border border-line bg-surface px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50 disabled:opacity-50"
+            >
+              {importing ? "Importing…" : "Import file into this document"}
+            </button>
+            <input
+              ref={fileInput}
+              type="file"
+              accept={ACCEPT_ATTRIBUTE}
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) void importIntoDocument(file);
+              }}
+            />
+          </>
+        )}
+
+        {/* Viewers can export too — they are allowed to read the content. */}
+        <button
+          type="button"
+          onClick={exportMarkdown}
+          disabled={!editor}
+          className="rounded-md border border-line bg-surface px-3 py-1.5 text-xs font-medium transition hover:bg-neutral-50 disabled:opacity-50"
+        >
+          Export as Markdown
+        </button>
+
+        {access.canWrite && (
           <span className="text-xs text-muted">
-            Appended at the end · {SUPPORTED_EXTENSIONS.join(", ")} · max 2 MB
+            Imports append at the end · {SUPPORTED_EXTENSIONS.join(", ")} · max 2 MB
           </span>
-          <input
-            ref={fileInput}
-            type="file"
-            accept={ACCEPT_ATTRIBUTE}
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) void importIntoDocument(file);
-            }}
-          />
-        </div>
-      )}
+        )}
+      </div>
 
       {importError && (
         <p role="alert" className="mt-2 rounded-md bg-red-50 p-3 text-sm text-red-700">

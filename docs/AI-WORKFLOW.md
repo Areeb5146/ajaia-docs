@@ -34,7 +34,7 @@ types our schema allows, and make it unit-testable" produces the thing I actuall
 - **Boilerplate with a known shape** — REST handlers, Zod schemas, Tailwind markup, the share
   dialog. This is the bulk of the line count and near-zero of the thinking.
 - **Test enumeration.** I specified the permission matrix and the edge cases I cared about; the
-  model wrote 35 tests covering them faster than I would have, including cases I'd have skipped
+  model wrote 42 tests covering them faster than I would have, including cases I'd have skipped
   under time pressure (anonymous caller, stale owner-share row, `.doc` renamed to `.docx`).
 - **Documentation drafting** — this note, the README tables, and the architecture note started as
   drafts I restructured.
@@ -84,12 +84,12 @@ Four layers, in increasing cost:
 
 1. **`tsc --noEmit` and `eslint`** on every change. The React Compiler rules in Next 16 caught the
    autosave bug described above.
-2. **`vitest run` — 35 tests** over the pure modules. This caught a real bug: `docToPlainText`
+2. **`vitest run` — 42 tests** over the pure modules. This caught a real bug: `docToPlainText`
    emitted phantom blank lines between list items, because `listItem` and `blockquote` wrap
    paragraphs and were both being counted as text-emitting blocks. Nothing in the UI would have made
    that obvious; it would have shown up as ugly dashboard previews.
 3. **A production build** (`npm run build`) before deploying, not after.
-4. **A headless-browser pass** (`npm run verify:ui`, 18 checks) driving the real UI against the
+4. **A headless-browser pass** (`npm run verify:ui`, 19 checks) driving the real UI against the
    production build. This is the layer that earned its cost — it caught **two bugs nothing else
    could have**:
 

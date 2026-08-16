@@ -118,10 +118,14 @@ and a corrupt/renamed `.docx` — that last one otherwise surfaces as a raw zip 
 
 ## Testing
 
-35 tests over the four pure modules: access rules, document validation, the Markdown converter, and
-upload gating.
+42 tests over the five pure modules: access rules, document validation, the Markdown converter, the
+Markdown exporter, and upload gating. Plus 19 end-to-end browser checks (`npm run verify:ui`).
 
-I tested the **domain layer, not the UI**, because that's where a bug is silent. A broken toolbar
+The export suite includes a **round-trip assertion** — a document exported to Markdown and
+re-imported must produce an identical tree. That is the cheapest strong guarantee available for two
+converters that have to agree.
+
+I unit-tested the **domain layer, not the UI**, because that's where a bug is silent. A broken toolbar
 button is visible in five seconds; an access rule that grants an editor the ability to re-share is
 not. The access test is a full permission matrix including the anonymous case and a stale
 owner-share row.
@@ -145,5 +149,5 @@ matrix was the better trade.
 3. **API integration tests** — against a throwaway Postgres, encoding the permission matrix I
    verified by hand.
 4. **Version history** — the JSON content model makes snapshots straightforward.
-5. **Export to Markdown/PDF** — the inverse of the import converter; the Markdown direction is
-   nearly free.
+5. **Export to PDF** — Markdown export already ships (`lib/export.ts`, with a round-trip test);
+   PDF needs a rendering step.

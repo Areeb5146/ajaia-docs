@@ -130,6 +130,27 @@ try {
     `h1 count=${await body.locator("h1").count()}`,
   );
 
+  const [download] = await Promise.all([
+    ava.page.waitForEvent("download", { timeout: 15000 }),
+    ava.page.getByRole("button", { name: "Export as Markdown" }).click(),
+  ]);
+  const exported = await download
+    .createReadStream()
+    .then(async (s) => {
+      const chunks = [];
+      for await (const c of s) chunks.push(c);
+      return Buffer.concat(chunks).toString("utf8");
+    })
+    .catch(() => "");
+  ok(
+    "export produces Markdown with formatting intact",
+    download.suggestedFilename().endsWith(".md") &&
+      exported.includes("# Heading here") &&
+      exported.includes("**bold bit**") &&
+      exported.includes("- item one"),
+    `${download.suggestedFilename()} :: ${exported.slice(0, 80).replace(/\n/g, "\\n")}`,
+  );
+
   await ava.page.getByRole("button", { name: "Share" }).click();
   await ava.page.getByLabel("Email of a seeded account").fill("cleo@ajaia.test");
   await ava.page.getByLabel("Access level").selectOption("VIEWER");

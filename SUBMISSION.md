@@ -40,9 +40,11 @@ opens read-only, no toolbar.
 | `SUBMISSION.md` | This file |
 | `app/` | Next.js App Router — pages and REST API routes |
 | `components/` | Editor, toolbar, share dialog, autosave hook |
-| `lib/` | Domain layer: access rules, document validation, Markdown converter, upload gating |
+| `lib/` | Domain layer: access rules, document validation, Markdown import/export, upload gating |
 | `prisma/` | Schema, migration, seed script |
-| `tests/` | 35 vitest unit tests over the domain layer |
+| `tests/` | 42 vitest unit tests over the domain layer |
+| `scripts/verify-ui.mjs` | 19 end-to-end browser checks (`npm run verify:ui`) |
+| `samples/` | Example files for testing the upload flow |
 
 ---
 
@@ -65,9 +67,13 @@ opens read-only, no toolbar.
   owner's name and whether you can edit or only view.
 - **Validation and errors** — every failure path returns a readable message: unsupported file type,
   oversized file, corrupt `.docx`, empty title, unknown share recipient, invalid document content.
-- **Automated tests** — `npm test` runs 35 unit tests covering the permission matrix, the content
-  validation allowlist, the Markdown converter, and upload gating. `npm run verify:ui` runs 18
-  end-to-end browser checks against a running build.
+- **Export to Markdown** *(stretch)* — any document downloads as `.md` with formatting intact. It is
+  the inverse of the import converter, and a test asserts a document round-trips through export and
+  re-import unchanged. Viewers can export too, since they are allowed to read.
+- **Role-based sharing** *(stretch)* — viewer vs. editor, enforced server-side.
+- **Automated tests** — `npm test` runs 42 unit tests covering the permission matrix, the content
+  validation allowlist, the Markdown converter and exporter, and upload gating. `npm run verify:ui`
+  runs 19 end-to-end browser checks against a running build.
 
 ## What is intentionally incomplete
 
@@ -90,8 +96,7 @@ Each of these was a deliberate cut, not an oversight. Reasoning is in `docs/ARCH
    currently verify by hand.
 3. **Real sessions** — signed cookies and a proper account model.
 4. **Version history** — snapshots are straightforward given JSON content.
-5. **Export to Markdown / PDF** — the inverse of the import converter; the Markdown direction is
-   nearly free.
+5. **Export to PDF** — Markdown export already ships; PDF needs a rendering step.
 
 ---
 
@@ -103,7 +108,7 @@ cp .env.example .env          # set DATABASE_URL (any Postgres; `npx create-db` 
 npx prisma migrate deploy
 npm run db:seed               # creates the 3 accounts above
 npm run dev                   # http://localhost:3000
-npm test                      # 35 tests
+npm test                      # 42 tests
 ```
 
 Full detail in `README.md`.
