@@ -1,0 +1,16 @@
+Meeting notes - 16 August
+
+Plain text imports too. Every blank line starts a new paragraph, and
+consecutive lines are joined into one, the way Markdown treats them.
+
+Attendees
+- Ava
+- Ben
+- Cleo
+
+Decisions
+1. Ship the editor slice before real-time
+2. Sharing model before real auth
+3. Deploy early, not last
+
+There is no Markdown syntax required for a .txt file to import cleanly.
